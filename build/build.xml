@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="php3" default="build" basedir=".">
+
+    <target name="build" depends="copy, composer, replaceData, migration, symlink"/>
+
+    <target name="vars">
+
+        <resolvepath propertyName="tmp.dir" file="${project.basedir}" />
+        <echo msg="Temporary dir: ${tmp.dir}" />
+
+        <php returnProperty="build.time" function="date">
+            <param value="Ymd_his" />
+        </php>
+
+        <resolvepath propertyName="target.dir" file="../assembly/${build.time}" />
+
+        <echo msg="Target dir: ${target.dir}" />
+
+        <property name="db_path" value="../database/php3.sqlite" />
+        <property name="strava_client_id" value="32456" />
+        <property name="strava_client_secret" value="2f5ff1abae030eb85d6add1d64252044" />
+        <property name="strava_access_token" value="00a363daa35bfc67c83a2cd855de048d" />
+        <property name="strava_reg_password" value="33c3898584cae7252b75a1212c0909a1" />
+        <property name="google_api_key" value="cf0f9295b98ec522908aabfb8793f43e" />
+    </target>
+
+    <target name="copy" depends="vars">
+        <copy todir="${target.dir}">
+            <fileset dir="${project.basedir}">
+                <include name="**" />
+                <exclude name=".idea/**" />
+                <exclude name="build/**" />
+                <exclude name="vendor/**" />
+                <exclude name=".env/**" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="replaceData" depends="copy">
+        <copy file="${target.dir}/.env.example" tofile="${target.dir}/.env" overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="{{" endtoken="}}">
+                    <token key="db_path" value="${domain}" />
+                    <token key="strava_client_id" value="${strava_client_id}" />
+                    <token key="strava_client_secret" value="${strava_client_secret}" />
+                    <token key="strava_access_token" value="${strava_access_token}" />
+                    <token key="strava_reg_password" value="${strava_reg_password}" />
+                    <token key="google_api_key" value="${google_api_key}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+    <target name="migration" depends="replaceData">
+
+    </target>
+
+    <target name="composer" depends="replaceData">
+        <exec command="composer install" dir="${target.dir}" checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="symlink" depends="composer">
+        <symlink link="../public_html/php3.site" target="../php3/${build.time}" overwrite="true"></symlink>
+    </target>
+
+</project>
