@@ -58,6 +58,7 @@
 
     <target name="composer" depends="replaceData">
         <exec command="composer install" dir="${target.dir}" checkreturn="true" passthru="true"/>
+        <exec command="php artisan key:generate" dir="${target.dir}" checkreturn="true" passthru="true"/>
     </target>
 
     <target name="migration" depends="composer" description="Database Migrations">
