@@ -19,7 +19,7 @@ class CreateRolesTable extends Migration
             $table->string('title');
             $table->timestamps();
         });
-        $admin = DB::table('roles')->insert(
+        DB::table('roles')->insert(
             [
                 'title' => 'admin',
             ]);
@@ -27,14 +27,14 @@ class CreateRolesTable extends Migration
             [
                 'title' => 'user',
             ]);
-        Schema::create('user_roles', function (Blueprint $table) {
+        Schema::create('user_role', function (Blueprint $table) {
             $table->integer('user_id');
             $table->integer('role_id');
         });
-        DB::table('users')->insert(
+        DB::table('user_role')->insert(
             [
                 'user_id' => \App\User::where('name', '=', 'FirstUser')->first()->id,
-                'role_id' => $admin->id,
+                'role_id' => \App\Role::where('title', '=', 'admin')->first()->id,
             ]);
     }
 
@@ -46,5 +46,6 @@ class CreateRolesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('roles');
+        Schema::dropIfExists('user_role');
     }
 }

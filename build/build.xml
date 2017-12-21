@@ -16,7 +16,7 @@
 
         <echo msg="Target dir: ${target.dir}" />
 
-        <property name="db_path" value="../database/php3.sqlite" />
+        <property name="db_path" value="../../database/php3.sqlite" />
         <property name="strava_client_id" value="32456" />
         <property name="strava_client_secret" value="2f5ff1abae030eb85d6add1d64252044" />
         <property name="strava_access_token" value="00a363daa35bfc67c83a2cd855de048d" />
@@ -31,7 +31,12 @@
                 <exclude name=".idea/**" />
                 <exclude name="build/**" />
                 <exclude name="vendor/**" />
-                <exclude name=".env/**" />
+                <exclude name=".vagrant/**" />
+                <exclude name="Homestead.json" />
+                <exclude name="Homestead.yaml" />
+                <exclude name="npm-debug.log" />
+                <exclude name="yarn-error.log" />
+                <exclude name=".env" />
             </fileset>
         </copy>
     </target>
@@ -40,7 +45,7 @@
         <copy file="${target.dir}/.env.example" tofile="${target.dir}/.env" overwrite="true">
             <filterchain>
                 <replacetokens begintoken="{{" endtoken="}}">
-                    <token key="db_path" value="${domain}" />
+                    <token key="db_path" value="${db_path}" />
                     <token key="strava_client_id" value="${strava_client_id}" />
                     <token key="strava_client_secret" value="${strava_client_secret}" />
                     <token key="strava_access_token" value="${strava_access_token}" />
@@ -51,16 +56,16 @@
         </copy>
     </target>
 
-    <target name="migration" depends="replaceData">
-
-    </target>
-
     <target name="composer" depends="replaceData">
         <exec command="composer install" dir="${target.dir}" checkreturn="true" passthru="true"/>
     </target>
 
-    <target name="symlink" depends="composer">
-        <symlink link="../public_html/php3.site" target="../php3/${build.time}" overwrite="true"></symlink>
+    <target name="migration" depends="composer" description="Database Migrations">
+        <exec command="php artisan migrate" dir="${target.dir}" checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="symlink" depends="migration">
+        <symlink link="../public_html/php3.site" target="${target.dir}" overwrite="true"></symlink>
     </target>
 
 </project>
