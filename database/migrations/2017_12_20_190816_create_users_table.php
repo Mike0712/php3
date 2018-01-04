@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
             [
                 'name' => 'FirstUser',
                 'email' => 'vasya@domain.com',
-                'password' => 'vasya123'
+                'password' => \Hash::make('vasya123'),
             ]
         );
     }

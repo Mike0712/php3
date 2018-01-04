@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="php3" default="build" basedir=".">
 
-    <target name="build" depends="copy, composer, replaceData, migration, symlink"/>
+    <target name="build" depends="copy, composer, replaceData, migration, testing, symlink"/>
 
     <target name="vars">
 
@@ -65,7 +65,12 @@
         <exec command="php artisan migrate" dir="${target.dir}" checkreturn="true" passthru="true"/>
     </target>
 
-    <target name="symlink" depends="migration">
+    <target name="testing" depends="migration" description="Database Migrations">
+        <copy file="${tmp.dir}/build/phpunit-6.5.5.phar" tofile="${target.dir}/phpunit.phar" overwrite="true"></copy>
+        <exec command="php phpunit.phar" dir="${target.dir}" checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="symlink" depends="testing">
         <symlink link="../public_html/php3.site" target="${target.dir}" overwrite="true"></symlink>
     </target>
 

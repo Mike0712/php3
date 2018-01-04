@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'firstName', 'lastName', 'patronymic', 'email', 'password',
     ];
 
     /**
@@ -26,4 +26,21 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function getName()
+    {
+        $name = $this->email;
+
+        if ($this->firstName && $this->lastName && !$this->patronymic){
+            $name = "{$this->firstName} {$this->lastName}";
+        }
+
+        if ($this->firstName && $this->lastName && $this->patronymic){
+
+            $name = "{$this->lastName} {$this->firstName} {$this->patronymic}";
+        }
+
+
+        return $name;
+    }
 }
