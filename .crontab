@@ -1,0 +1,2 @@
+*/1 * * * * echo "hello world" >> ~/apps/php3/storage/logs/cron.log
+
