@@ -1,2 +1,2 @@
-*/1 * * * * echo "hello world" >> ~/apps/php3/storage/logs/cron.log
+*/1 * * * * php ~/apps/php3/shedule.php >> ~/apps/php3/storage/logs/cron.log
 
