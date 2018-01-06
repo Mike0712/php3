@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="php3" default="build" basedir=".">
 
-    <target name="build" depends="copy, composer, replaceData, migration, testing, symlink"/>
+    <target name="build" depends="copy, composer, replaceData, migration, testing, cron, symlink"/>
 
     <target name="vars">
 
@@ -22,6 +22,8 @@
         <property name="strava_access_token" value="00a363daa35bfc67c83a2cd855de048d" />
         <property name="strava_reg_password" value="33c3898584cae7252b75a1212c0909a1" />
         <property name="google_api_key" value="cf0f9295b98ec522908aabfb8793f43e" />
+        <property name="mail_username" value="f133f146871407" />
+        <property name="mail_password" value="24c521b07a5544" />
     </target>
 
     <target name="copy" depends="vars">
@@ -37,6 +39,8 @@
                 <exclude name="npm-debug.log" />
                 <exclude name="yarn-error.log" />
                 <exclude name=".env" />
+                <exclude name=".crontab" />
+                <exclude name="sedule.php" />
             </fileset>
         </copy>
     </target>
@@ -51,6 +55,9 @@
                     <token key="strava_access_token" value="${strava_access_token}" />
                     <token key="strava_reg_password" value="${strava_reg_password}" />
                     <token key="google_api_key" value="${google_api_key}" />
+                    <token key="mail_username" value="${mail_username}" />
+                    <token key="mail_password" value="${mail_password}" />
+
                 </replacetokens>
             </filterchain>
         </copy>
@@ -70,7 +77,20 @@
         <exec command="php phpunit.phar" dir="${target.dir}" checkreturn="true" passthru="true"/>
     </target>
 
-    <target name="symlink" depends="testing">
+    <target name="cron" depends="testing" description="Cron tasks">
+        <copy file="${tmp.dir}/build/shedule.php" tofile="${target.dir/shedule.php}"></copy>
+        <exec command="chmod +x shedule.php" dir="${target.dir}" checkreturn="true" passthru="true"/>
+        <copy file="${tmp.dir}/build/crontab.txt" tofile="${target.dir}/.crontab" overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="{{" endtoken="}}">
+                    <token key="base_dir" value="${target.dir}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <exec command="crontab .crontab" dir="${target.dir}"  checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="symlink" depends="cron">
         <symlink link="../public_html/php3.site" target="${target.dir}" overwrite="true"></symlink>
     </target>
 
