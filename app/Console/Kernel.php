@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\CheckMemory::class
+        Commands\CheckMemory::class,
+        Commands\ChasingTheCicle::class,
     ];
 
     /**

@@ -13,7 +13,7 @@ class CheckMemory extends Command
      *
      * @var string
      */
-    protected $signature = 'memory:check {number}';
+    protected $signature = 'memory:check {number} {real_usage}';
 
     /**
      * The console command description.
@@ -40,14 +40,18 @@ class CheckMemory extends Command
     public function handle()
     {
         $number = (int) $this->argument('number');
-        $before = memory_get_usage(true);
-        $array = range(1 ,$number);
-        $after = memory_get_usage(true);
+        $real_usage = (boolean) $this->argument('real_usage');
+        $before = memory_get_usage($real_usage);
+        $array  = range(1 ,$number);
+        $after  = memory_get_usage($real_usage);
 
         $total = (int) $after - (int) $before;
 
         $single = $total/count($array);
-        $result = ['total memory on 1 million items ' . $total . ' bytes', 'result of one integer set is ' . $single .  'bytes'];
+        $result = ['total memory on 1 million items ' . $total . ' bytes',
+                   'result of one integer set is ' . $single .  'bytes',
+                   'before ' . $before . ' bytes',
+                   'after '   . $after  . ' bytes'];
 
 
         $log = new Logger('Checking Memory');
