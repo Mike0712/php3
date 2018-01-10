@@ -40,7 +40,6 @@
                 <exclude name="yarn-error.log" />
                 <exclude name=".env" />
                 <exclude name=".crontab" />
-                <exclude name="shedule.php" />
             </fileset>
         </copy>
     </target>
@@ -78,8 +77,6 @@
     </target>
 
     <target name="cron" depends="testing" description="Cron tasks">
-        <copy file="${tmp.dir}/build/shedule.php" tofile="${target.dir}/shedule.php"></copy>
-        <exec command="chmod +x shedule.php" dir="${target.dir}" checkreturn="true" passthru="true"/>
         <copy file="${tmp.dir}/build/crontab.txt" tofile="${target.dir}/.crontab" overwrite="true">
             <filterchain>
                 <replacetokens begintoken="{{" endtoken="}}">

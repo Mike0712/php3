@@ -1,1 +1,2 @@
-*/1 * * * * php {{base_dir}}/shedule.php >> {{base_dir}}/storage/logs/cron.log
+*/1 * * * * {{base_dir}}/artisan check:visits vasya vasya321@mail.ru >> {{base_dir}}/storage/logs/cron.log
+
